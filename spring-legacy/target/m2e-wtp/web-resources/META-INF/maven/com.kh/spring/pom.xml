@@ -123,8 +123,7 @@
 			<scope>test</scope>
 		</dependency>
 
-		<!-- DB와 관련된 의존성 1)ojdbc6 / spring jdbc 2) mybatis / spring mybatis 3) 
-			커넥션풀 -->
+		<!-- DB와 관련된 의존성 1)ojdbc6 / spring jdbc 2) mybatis / spring mybatis 3) 커넥션풀 -->
 		<dependency>
 			<groupId>com.oracle.database.jdbc</groupId>
 			<artifactId>ojdbc6</artifactId>
