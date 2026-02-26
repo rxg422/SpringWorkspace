@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+	
+	<!-- Root Context: defines shared resources visible to all other web components -->
+	<!-- 
+		Root Context
+			- 서버 구동과 동시에 web.xml파일을 거쳐 로딩되는 문서
+			- 서버 구동과 동시에 세팅하여야 하는 내용들을 작성하며, 작성한 내용은 어플리케이션 전역에서 사용된다.
+	 -->
+	 <context:property-placeholder location="classpath:driver.properties"/>
+	 
+	 <!-- DB 연결설정 -->
+	 <!-- 1) DB 연결도구 설정 -->
+	 <bean class="org.apache.commons.dbcp.BasicDataSource" id="datasource" destroy-method="close">
+	 	<property name="driverClassName" value="${datasource.driverClassName}"/>
+	 	<property name="url" value="${datasource.url}"/>
+	 	<property name="username" value="${datasource.username"/>
+	 	<property name="password" value="${datasource.password"/>
+	 </bean>
+	 <!-- 2) MyBatis spring 제공 sql 명령실행도구 등록 -->
+	 <bean class="org.mybatis.spring.SqlSessionFactoryBean" id="sqlSessionFactory">
+	 	<!-- mybatis 설정파일 위치 지정 -->
+	 	<property name="configLocation" value="classpath:mybatis-config.xml"/>
+	 	<!-- DB 연결도구 -->
+	 	<property name="dataSource" ref="datasource"/>
+	 	<!-- mapper 파일 위치등록 -->
+	 	<property name="mapperLocations" value="classpath*:mapper/**/*.xml"></property>
+	 </bean>
+	 <!-- 3) sql구문을 실행하기 위한 템플릿을 제공하는 bean객체 등록 -->
+	 <bean class="org.mybatis.spring.SqlSessionTemplate" id="sqlSession">
+	 	<constructor-arg ref="sqlSessionFactory"/>
+	 </bean>
+	 
+	 <!-- 
+	 	transactionManager
+	 		- 트랜젝션 처리하는 bean객체
+	 		- JDBC를 통해 커넥션을 얻어온 후, 트랜젝션 시작/커밋/롤백 담당
+	 		- @Transactional 어노테이션을 통해 트랜젝션을 선언적으로 처리
+	  -->
+	  <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+	  	<property name="dataSource" ref="datasource"/>
+	  </bean>
+	  
+</beans>
