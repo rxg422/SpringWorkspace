@@ -2,4 +2,34 @@
 
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 
-<mapper namespace="member"></mapper>
+<mapper namespace="member">
+	<select id="loginMember" resultType="member">
+		SELECT * FROM member WHERE user_id=#{userId} AND user_pwd=#{userPwd} AND STATUS='Y'
+	</select>
+	
+	<insert id="insertMember">
+		INSERT INTO member VALUES(
+			SEQ_UNO.NEXTVAL,
+			#{userId},
+			#{userPwd},
+			#{userName},
+			#{email},
+			#{birthday},
+			#{gender},
+			#{phone},
+			#{address},
+			DEFAULT,
+			DEFAULT,
+			DEFAULT,
+			DEFAULT
+		)
+	</insert>
+	
+	<select id="idCheck" resultType="int">
+		SELECT COUNT(*) FROM member WHERE user_id = #{userId}
+	</select>
+	
+	<select id="selectOne" resultType="Member">
+		SELECT user_id, user_name FROM member WHERE user_id = #{userId} AND STATUS='Y'
+	</select>
+</mapper>
