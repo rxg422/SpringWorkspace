@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import com.kh.spring.member.model.vo.Member;
+import com.kh.spring.security.model.vo.MemberExt;
 
 @Repository
 public class MemberDaoImpl implements MemberDao {
@@ -23,6 +24,11 @@ public class MemberDaoImpl implements MemberDao {
 	}
 
 	@Override
+	public void insertAuthority(Member m) {
+		session.insert("member.insertAuthority", m);
+	}
+
+	@Override
 	public int idCheck(String userId) {
 		return session.selectOne("member.idCheck", userId);
 	}
@@ -31,5 +37,10 @@ public class MemberDaoImpl implements MemberDao {
 	public Member selectOne(String userId) {
 		return session.selectOne("member.selectOne", userId);
 	}
-	
+
+	@Override
+	public int updateMember(MemberExt loginUser) {
+		return session.update("member.updateMember", loginUser);
+	}
+
 }

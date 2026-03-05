@@ -23,6 +23,18 @@
 			DEFAULT,
 			DEFAULT
 		)
+		
+		<!-- selectKey : insert 전/후 실행되어 게시글 번호와 같은 자동 증가값을 가져오기 위해 사용 -->
+		<!-- keyProperty : 결과값을 저장할 필드명 -->
+		<!-- resultType : 반환값 자료형 -->
+		<!-- order : insert문 실행 전/후 선택 -->
+		<selectKey keyProperty="userNo" resultType="int" order="AFTER">
+			SELECT SEQ_UNO.CURRVAL FROM DUAL
+		</selectKey>
+	</insert>
+	
+	<insert id="insertAuthority">
+		INSERT INTO authorities VALUES(#{userNo}, 'ROLE_USER')
 	</insert>
 	
 	<select id="idCheck" resultType="int">
@@ -32,4 +44,12 @@
 	<select id="selectOne" resultType="Member">
 		SELECT user_id, user_name FROM member WHERE user_id = #{userId} AND STATUS='Y'
 	</select>
+	
+	<update id="updateMember">
+		UPDATE member
+		SET USER_NAME = #{userName}, EMAIL = #{email}, BIRTHDAY = #{birthday}, GENDER = #{gender}, PHONE = #{phone}, ADDRESS = #{address}, MODIFY_DATE = SYSDATE
+		WHERE user_id = #{userId} AND status = 'Y'
+	</update>
+	
+	
 </mapper>

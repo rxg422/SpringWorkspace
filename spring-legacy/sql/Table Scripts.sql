@@ -143,9 +143,23 @@ CREATE TABLE CHAT_ROOM_JOIN (
 CREATE SEQUENCE SEQ_CR_NO;
 CREATE SEQUENCE SEQ_CM_NO;
 
+-----------------------------------------------------------
 
+CREATE TABLE AUTHORITIES(
+    USER_NO NUMBER REFERENCES MEMBER ,
+    AUTHORITY VARCHAR2(15) ,
+    PRIMARY KEY(USER_NO, AUTHORITY)
+);
 
+CREATE TABLE persistent_logins (
+  username        VARCHAR(64)  NOT NULL,
+  series          VARCHAR(64)  PRIMARY KEY,
+  token           VARCHAR(64)  NOT NULL,
+  last_used       TIMESTAMP    NOT NULL
+);
 
+CREATE INDEX idx_persistent_logins_username
+ON persistent_logins(username);
 
 
 

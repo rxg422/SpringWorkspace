@@ -44,7 +44,7 @@
 	
 	<appender name="dailyLog" class="org.apache.log4j.DailyRollingFileAppender">
 		<!-- appender의 기본 출력 레벨 -->
-		<param name="threshold" value="INFO"/>
+		<param name="threshold" value="DEBUG"/>
 		<param name="append" value="true"/>
 		<param name="file" value="/RXG_Workspace/logs/kh.log"/>
 		<!--

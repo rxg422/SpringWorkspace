@@ -7,5 +7,75 @@
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
 
+	<!-- 암오화 인코딩 기능을 가진 bean 객체 등록 -->
+	<bean id="bcryptPasswordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"/>
 
+	<!--
+		http
+			- 특정 URL에 대해 보안 규칙을 정의(인가)
+			- url에 접근할 때 사용자가 권한이 없으면 오류 페이지로 리디렉트 하거나 로그인 페이지로 이동 처리 가능
+			- url단위 사용자별 권한 부여가 필요할 때 사용
+	-->
+	<!-- 정적파일에 대한 보안검사 제외 -->
+	<security:http security="none" pattern="/resources/**"/>
+	
+	<security:http auto-config="true">
+		<!-- 메인 페이지, 회원가입 페이지, 로그인 페이지, 아이디 중복체크 기능을 모든 사용자가 이용 가능하도록 설정 -->
+		<security:intercept-url pattern="/" access="permitAll"/>
+		<security:intercept-url pattern="/security/insert" access="permitAll"/>
+		<security:intercept-url pattern="/member/login" access="permitAll"/>
+		<security:intercept-url pattern="/member/idCheck" access="permitAll"/>
+		<security:intercept-url pattern="/security/accessDenied" access="permitAll"/>
+		
+		<!-- 채팅과 관련된 url 권한 -->
+		<security:intercept-url pattern="/chat/**" access="hasRole('USER')"/>
+		<security:intercept-url pattern="/board/**" access="hasRole('USER')"/>
+		<security:intercept-url pattern="/reply/**" access="hasRole('USER')"/>
+		<security:intercept-url pattern="/stomp/**" access="permitAll"/>
+
+		<security:intercept-url pattern="/admin/**" access="hasRole('ADMIN')"/>
+		
+		<!-- 
+			form-login
+				- form 기반 로그인 인증 설정
+				- login-page : 로그인 form 페이지 경로
+				- login-processing-url : 로그인 폼 제출시 해당 폼의 정보를 처리하난 url경로. 인증처리는 Manager가 인증토큰을 생성한 후, Provider를 통해 인증 수행
+				- username-parameter / password-parameter : 제출 폼의 id/pw에 해당하는 name 값이 username, password가 아닌경우 사용
+		 -->
+		<security:form-login login-page="/member/login" login-processing-url="/member/loginProcess" username-parameter="userId" password-parameter="userPwd"/>
+		<security:logout logout-url="/member/logout" invalidate-session="true" logout-success-url="/"/>
+		
+		<!-- 
+			remember-me
+				- session의 유지시간이 초과되어도 사용자의 인증상태를 유지하게 하는 필터
+				- 사용자의 인증정보를 브라우저의 쿠키에 저장하여 다시 접속시 자동으로 로그인이 유지되도록 하는 속성
+			
+			datasource-ref
+				- remember-me : 토큰 저장 객체
+				- remember-me : 토큰은 시큐리티에 의해 자동으로 추가 및 삭제
+			token-validity-second : 초단위 유지시간
+		 -->
+		<security:remember-me data-source-ref="datasource" token-validity-seconds="1209600"/>
+		
+		<!-- 접근 권한이 없는 url 요청시 처리 -->
+		<security:access-denied-handler error-page="/security/accessDenied"/>
+	</security:http>
+	
+	<!-- Authentication Manemer / Provider 등록을 위하ㅏㄴ brean 객체 등록 -->
+	<context:component-scan base-package="com.kh.spring.security"/>
+	<context:component-scan base-package="com.kh.spring.member"/>
+	
+	<!-- 
+		authentication-manager
+	 		- 인증 처리를 담당하는 컴포넌트
+	 	authentcation-provider
+	 		- authentication-manager에 등록되어 실제 인증로직을 수행하는 객체
+	 		- 실제 인증로직으로는 UserDetailService를 구현한 bean 객체를 등록해야함.
+	 		- provider는 인증 성공시 UserDetails를 반환
+	 -->
+	 <security:authentication-manager>
+	 	<security:authentication-provider user-service-ref="securityServiceImpl">
+	 		<security:password-encoder ref="bcryptPasswordEncoder"/>
+	 	</security:authentication-provider>
+	 </security:authentication-manager>
 </beans>
