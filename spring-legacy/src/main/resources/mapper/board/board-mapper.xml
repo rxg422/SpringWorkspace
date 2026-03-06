@@ -2,14 +2,90 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="board">
 	<select id="getBoardTypeMap" resultType="boardType">
-		SELECT board_cd as "boardCd", board_name AS "boardName" FROM board_type
+		SELECT board_cd as
+		"boardCd", board_name AS "boardName" FROM board_type
 	</select>
-	
+
 	<select id="selectList" resultType="board">
-		SELECT board_no, board_title, user_name AS board_writer, count, create_date
-		FROM board b
+		SELECT * FROM (
+			SELECT ROWNUM AS RNUM, T1.*
+			FROM (
+				SELECT board_no, board_title, user_name AS board_writer, count, create_date
+				FROM board b
+				LEFT JOIN member m ON board_writer = user_no
+				WHERE b.status = 'Y' AND board_cd = #{boardCd}
+				<if test="keyword != null and keyword != ''">
+					AND
+					<choose>
+						<when test="condition.equals('title')">
+							board_title LIKE '%' || #{keyword} || '%'
+						</when>
+						<when test="condition.equals('writer')">
+							user_name LIKE '%' || #{keyword} || '%'
+						</when>
+						<when test="condition.equals('content')">
+							board_content LIKE '%' || #{keyword} || '%'
+						</when>
+						<otherwise>
+							board_title LIKE '%' || #{keyword} || '%' OR board_content LIKE '%' || #{keyword} || '%'
+						</otherwise>
+					</choose>
+				</if>
+				ORDER BY board_no DESC
+			) T1
+		)
+		WHERE RNUM BETWEEN #{offset} AND #{limit}
+	</select>
+
+	<select id="selectListCount" resultType="int">
+		SELECT COUNT(*)
+		FROM
+		board b
 		LEFT JOIN member m ON board_writer = user_no
 		WHERE b.status = 'Y' AND board_cd = #{boardCd}
-		ORDER BY board_no DESC
+		<if test="keyword != null and keyword != ''">
+			AND
+			<choose>
+				<when test="condition.equals('title')">
+					board_title LIKE '%' || #{keyword} || '%'
+				</when>
+				<when test="condition.equals('writer')">
+					user_name LIKE '%' || #{keyword} || '%'
+				</when>
+				<when test="condition.equals('content')">
+					board_content LIKE '%' || #{keyword} || '%'
+				</when>
+				<otherwise>
+					board_title LIKE '%' || #{keyword} || '%' OR board_content LIKE '%' || #{keyword} || '%'
+				</otherwise>
+			</choose>
+		</if>
 	</select>
+	
+	<insert id="insertBoard">
+		<selectKey keyProperty="boardNo" resultType="int" order="BEFORE">
+			SELECT SEQ_BNO.NEXTVAL FROM DUAL
+		</selectKey>
+	
+		INSERT INTO board
+		VALUES(#{boardNo}, #{boardTitle}, #{boardContent}, #{boardCd}, #{boardWriter}, default, default, default)
+	</insert>
+	
+	<insert id="insertBoardImg">
+		INSERT INTO board_img
+		VALUES(SEQ_IMG_NO.NEXTVAL, #{originName}, #{changeName}, #{refBno}, #{imgLevel})
+	</insert>
+	
+	<!-- 행단위 insert문을 one sql로 수정 -->
+	<!-- 서브쿼리를 활용한 다중 insert문으로 한번에 모든 데이터 추가 -->
+	<insert id="insertBoardImgList">
+		INSERT INTO board_img(board_img_no, origin_name, change_name, ref_bno, img_level)
+		SELECT SEQ_IMG_NO.NEXTVAL, c.*
+		FROM (
+			<foreach collection="list" item="bi" separator="UNION ALL">
+				SELECT #{bi.originName}, #{bi.changeName}, #{bi.refBno}, #{bi.imgLevel} FROM DUAL
+			</foreach>
+		) c
+	</insert>
+	
 </mapper>
