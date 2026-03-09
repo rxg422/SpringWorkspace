@@ -71,11 +71,6 @@
 		VALUES(#{boardNo}, #{boardTitle}, #{boardContent}, #{boardCd}, #{boardWriter}, default, default, default)
 	</insert>
 	
-	<insert id="insertBoardImg">
-		INSERT INTO board_img
-		VALUES(SEQ_IMG_NO.NEXTVAL, #{originName}, #{changeName}, #{refBno}, #{imgLevel})
-	</insert>
-	
 	<!-- 행단위 insert문을 one sql로 수정 -->
 	<!-- 서브쿼리를 활용한 다중 insert문으로 한번에 모든 데이터 추가 -->
 	<insert id="insertBoardImgList">
@@ -88,4 +83,52 @@
 		) c
 	</insert>
 	
+	<select id="selectBoard" resultMap="boardExtMap">
+		SELECT board_no, board_writer, board_title, board_content, count, create_date, user_name
+		FROM board b
+		LEFT JOIN member m ON board_writer = user_no
+		WHERE board_no = #{boardNo} AND b.status = 'Y'
+	</select>
+	
+	<resultMap type="boardExt" id="boardExtMap">
+		<id column="board_no" property="boardNo"/>
+		
+		<!-- imgList 바인딩 -->
+		<collection property="imgList" javaType="List" ofType="boardImg" select="selectBoardImgList" column="board_no"/>
+	</resultMap>
+	
+	<select id="selectBoardImgList" resultType="boardImg">
+		SELECT *
+		FROM board_img
+		WHERE ref_bno = #{boardNo}
+		ORDER BY img_level
+	</select>
+	
+	<update id="increaseCount">
+		UPDATE board
+		SET count = count + 1
+		WHERE board_no = #{boardNo}
+	</update>
+	
+	<update id="updateBoard">
+		UPDATE board
+		SET board_title = #{boardTitle}, board_content = #{boardContent}
+		WHERE board_no = #{boardNo}
+	</update>
+	
+	<insert id="insertBoardImg">
+		INSERT INTO board_img
+		VALUES(SEQ_IMG_NO.NEXTVAL, #{originName}, #{changeName}, #{refBno}, #{imgLevel})
+	</insert>
+	
+	<update id="updateBoardImg">
+		UPDATE board_img
+		SET origin_name = #{originName}, change_name = #{changeName}
+		WHERE board_img_no = #{boardImgNo}
+	</update>
+	
+	<delete id="deleteBoardImg">
+		DELETE FROM board_img
+		WHERE board_img_no IN (${deleteList})
+	</delete>
 </mapper>
