@@ -131,4 +131,21 @@
 		DELETE FROM board_img
 		WHERE board_img_no IN (${deleteList})
 	</delete>
+	
+	<insert id="insertReply">
+		INSERT INTO reply
+		VALUES(SEQ_RNO.NEXTVAL, #{replyContent}, #{refBno}, #{replyWriter}, DEFAULT, DEFAULT)
+	</insert>
+	
+	<select id="selectReplyList" resultType="reply">
+		SELECT *
+		FROM reply
+		WHERE ref_bno = #{boardNo} AND status = 'Y'
+	</select>
+	
+	<update id="deleteReply">
+		UPDATE reply
+		SET status = 'N'
+		WHERE reply_no = #{replyNo} AND reply_writer = #{replyWriter}
+	</update>
 </mapper>

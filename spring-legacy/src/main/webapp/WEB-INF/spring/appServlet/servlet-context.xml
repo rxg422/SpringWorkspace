@@ -28,4 +28,33 @@
 	<!-- @TransactionManager 어노테이션 활성화 -->
 	<tx:annotation-driven transaction-manager="transactionManager"/>
 	
+	<!-- WebSocket 설정 -->
+	<!-- 
+		Http/Https
+			- 클라이언트와 웹서버 간 요청 응답기반으로 동작하는 전통적인 통신 방식
+			- 클라이언트의 요청이 있어야 응답이 발생하는 단방향 통신 구조
+			- 연결을 유지하지 않고 매 요청마다 새로운 연결을 생성하는 방식
+			- 실시간 처리 기능을 개발하는게 어려움. 구현방식이 단순하고 범용적으로 많이 사용
+		
+		WebSocket
+			- 클라이언트와 서버 간 지속적인 연결 유지, 양방향 통신 지원 프로토콜
+				* 양방향 통신 : 양쪽 장치가 송/수신을 독립적으로 할 수 있는 통신방식(전화기)
+			- 서버와 클라이언트가 서로 실시간으로 데이터를 주고 받을 수 있어 실시간 서비스 개발에 사용가능
+			- 일반 http보다 구현이 복잡하고, 연결 클라이언트 수 유지에 따른 리소스 관리 필요
+			
+		WebSocket 사용을 위한 스펙
+			- HTML5부터 사용가능
+			- JAVA7부터 지원
+			- Spring framework 4.0부터 지원
+			- Spring 모듈 : spring-websocket, spring-messaging
+		
+		WebSocket 동작방식
+			- http 프로토콜을 사용해 첫 연결 요청. 연결 성공 시 통신방식을 WebSocket으로 전환(ws)
+			- 연결 이후 데이터프레임을 주고 받음.
+		
+		SockJS
+			- WebSocket을 지원하지 않는 환경에서도 WebSocket처럼 동작하게 해주는 자바 스크립트 라이브러리
+			- WebSocket을 사용할 수 없는 경우 xhr 스트리밍, polling 방식을 통해 유사한 기능 제공
+			- WebSocket/sockJs는 메세지를 실시간으로 송수신 하기 위한 양방향 채널, 특별한 기능적인 규약은 존재하지 않음.
+	-->
 </beans:beans>

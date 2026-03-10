@@ -9,7 +9,23 @@
 <head>
 <meta charset="UTF-8">
 <title>제목</title>
+
 <!--  공통적으로사용할 라이브러리 추가 -->
+<meta name="_csrf" content="${_csrf.token}">
+<meta name="_csrf_header" content="${_csrf.headerName}">
+
+<script>
+	window.onload = function() {
+		var token = $("meta[name='_csrf']").attr("content");
+		var header = $("meta[name='_csrf_header']").attr("content");
+		
+		// 모든 ajax 요청에 자동으로 csrf 토큰 적용
+		$(document).ajaxSend(function(e, xhr, options) {
+			xhr.setRequestHeader(header, token);
+		});
+	}
+</script>
+
 <!-- Jquey 라이브러리 -->
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>

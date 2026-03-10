@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="chat">
+	<select id="selectChatRoomList" resultType="chatRoom">
+		SELECT chat_room_no,
+		title, user_name, (SELECT COUNT(*) FROM chat_room_join crj WHERE crj.chat_room_no = cr.chat_room_no) AS CNT
+		FROM chat_room cr
+		LEFT JOIN member USING(user_no)
+		WHERE cr.status = 'Y'
+		ORDER BY chat_room_no DESC
+	</select>
+	
+	<insert id="openChatRoom">
+		INSERT INTO chat_room
+		VALUES(SEQ_CR_NO.NEXTVAL, #{title}, DEFAULT, #{userNo})
+	</insert>
+	
+	<!-- 채팅방 참여 여부 획인 -->
+	<select id="joinCheck" resultType="int">
+		SELECT COUNT(*) 
+		FROM chat_room_join 
+		WHERE chat_room_no = #{chatRoomNo} AND user_no = #{userNo}
+	</select>
+	
+	<!-- 채팅방 참여 -->
+	<insert id="joinChatRoom">
+		INSERT INTO chat_room_join VALUES(#{userNo}, #{chatRoomNo})
+	</insert>
+	
+	<!-- 채팅방 메세지 조회 -->
+	<select id="selectChatMessage" resultType="chatMessage">
+		SELECT message, user_name, create_date, cm_no, user_no 
+		FROM chat_message 
+		LEFT JOIN member USING(user_no)
+		WHERE chat_room_no = #{chatRoomNo} 
+		ORDER BY cm_no
+	</select>
+</mapper>
