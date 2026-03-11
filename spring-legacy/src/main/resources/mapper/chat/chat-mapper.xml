@@ -36,4 +36,24 @@
 		WHERE chat_room_no = #{chatRoomNo} 
 		ORDER BY cm_no
 	</select>
+	
+	<insert id="insertMessage">
+		INSERT INTO chat_message
+		VALUES(SEQ_CM_NO.NEXTVAL, #{message}, DEFAULT, #{chatRoomNo}, #{userNo})
+	</insert>
+	
+	<delete id="exitChatRoom">
+		DELETE FROM chat_room_join
+		WHERE chat_room_no = #{chatRoomNo} AND user_no = #{userNo}
+	</delete>
+	
+	<select id="countChatRoomMember" resultType="int">
+		SELECT COUNT(*) FROM chat_room_join WHERE chat_room_no = #{chatRoomNo}
+	</select>
+	
+	<update id="closeChatRoom">
+		UPDATE chat_room
+		SET status = 'N'
+		WHERE chat_room_no = #{chatRoomNo}
+	</update>
 </mapper>

@@ -1,5 +1,5 @@
-<%@ page language="java" contentType="text/html; charset=UTF-8"
-	pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 
 <!DOCTYPE html>
 <html>
@@ -21,6 +21,32 @@
 			<div id="result1" style="height: 150px"></div>
 		</div>
 
+		<!--
+			관리자 공지 기능
+			- 관리자가 알람을 보내면 접속중인 모든 사용자에게 알림내용이 출력되도록 설정
+		-->
+		<sec:authorize access="hasRole('ROLE_ADMIN')">
+			<div class="content-2">
+				<div class="content-2">
+              	  	<input type="text" id="notice" placeholder="공지내용을입력하세요.">
+                	<button id="send-notice-btn">공지보내기</button>
+            	</div>
+			</div>
+			
+			<script>
+				$(function() {
+					const stompClient = Stomp.over(new SockJS('${contextPath}/stomp'));
+					
+					stompClient.connect({}, function() {
+						const sendBtn = document.querySelector("#send-notice-btn");
+						sendBtn.onclick = function() {
+							const content = document.querySelector("#notice").value;
+							stompClient.send("/app/notice/send", {}, content);
+						}
+					});
+				})
+			</script>
+		</sec:authorize>
 		<script>
 			document.getElementById("select1").addEventListener("click",
 					function() {

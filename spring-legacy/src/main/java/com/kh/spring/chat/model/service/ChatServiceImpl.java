@@ -3,6 +3,7 @@ package com.kh.spring.chat.model.service;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.kh.spring.chat.model.dao.ChatDao;
 import com.kh.spring.chat.model.vo.ChatMessage;
@@ -43,6 +44,32 @@ public class ChatServiceImpl implements ChatService {
 		}
 		
 		return list;
+	}
+
+	@Override
+	public int insertMessage(ChatMessage chatMessage) {
+		return chatDao.insertMessage(chatMessage);
+	}
+
+	@Override
+	@Transactional(rollbackFor = Exception.class)
+	public void exitChatRoom(ChatMessage message) {
+		int result = chatDao.exitChatRoom(message);
+		
+		if(result == 0) {
+			throw new RuntimeException("채팅방 나가기 오류");
+		}
+		
+		// 채팅방인원이 0명이면 채팅방 삭제
+		int cnt = chatDao.countChatRoomMember(message);
+		
+		if(cnt == 0) {
+			result = chatDao.closeChatRoom(message);
+			
+			if(result==0) {
+				throw new RuntimeException("채팅방 삭제 오류");
+			}
+		}
 	}
 
 }

@@ -26,6 +26,9 @@
 	}
 </script>
 
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+
 <!-- Jquey 라이브러리 -->
 <script
 	src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
@@ -171,24 +174,25 @@ div {
 	background-color: white;
 }
 </style>
+
+
+
+<sec:authorize access="isAuthenticated()">
+	<script>
+		$(function() {
+			const stompClient = Stomp.over(new SockJS('${contextPath}/stomp'));
+			
+			stompClient.connect({}, function() {
+				stompClient.subscribe("/topic/notice", function(message) {
+					alertify.alert(message.body);
+				})
+			});
+		})
+	</script>
+</sec:authorize>
+
 </head>
 <body>
-
-	<sec:authorize access="isAuthenticated()">
-		<script>
-			$(function() {
-				const webSocket = new SockJS("${contextPath}/stomp");
-				const stompClient = Stomp.over(webSocket);
-
-				stompClient.connect({}, function() {
-					// 전체 공지사항 url 구독
-					stompClient.subscribe("/topic/notice", function(message) {
-						alertify.alert(message.body);
-					})
-				});
-			})
-		</script>
-	</sec:authorize>
 	<c:if test="${not empty alertMsg}">
 		<script>
 			alertify.alert("서비스요청결과", '${alertMsg}')
