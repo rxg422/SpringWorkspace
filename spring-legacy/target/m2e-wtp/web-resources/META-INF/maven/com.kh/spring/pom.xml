@@ -38,12 +38,7 @@
 			<version>${org.springframework-version}</version>
 		</dependency>
 
-		<!-- AspectJ -->
-		<dependency>
-			<groupId>org.aspectj</groupId>
-			<artifactId>aspectjrt</artifactId>
-			<version>${org.aspectj-version}</version>
-		</dependency>
+
 
 		<!-- Logging -->
 		<dependency>
@@ -252,6 +247,22 @@
 			<artifactId>spring-messaging</artifactId>
 			<version>${org.springframework-version}</version>
 			<scope>compile</scope>
+		</dependency>
+
+		<!-- AOP 의존성 -->
+		<!-- AspectJ -->
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjrt</artifactId>
+			<version>${org.aspectj-version}</version>
+		</dependency>
+
+		<!-- aspectjweaver -->
+		<dependency>
+			<groupId>org.aspectj</groupId>
+			<artifactId>aspectjweaver</artifactId>
+			<version>${org.aspectj-version}</version>
+			<scope>runtime</scope>
 		</dependency>
 	</dependencies>
 	<build>
