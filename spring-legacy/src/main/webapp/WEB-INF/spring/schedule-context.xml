@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:task="http://www.springframework.org/schema/task"
+	xsi:schemaLocation="http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.3.xsd
+		http://www.springframework.org/schema/beans https://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd">
+
+	<!-- Spring Scheduler - 일정한 시간 간격이나, 특정 시점에 자동으로 실행되어야 하는 작업이 있는 경우 간단하게 설정하고 수행할 수 있도록 지원하는 스프링의 기능 -->
+	
+	<!-- 스퀘쥴링 관련 어노테이션 -->
+	<task:annotation-driven scheduler="khScheduler"/>
+	<context:component-scan base-package="com.kh.spring.common.scheduling" />
+	<context:component-scan base-package="com.kh.spring.board.model" />
+
+	<!-- 스케쥴링 병렬실행을 위한 스케쥴러 객체 생성 -->
+	<task:scheduler id="khScheduler" pool-size="10"/>
+</beans>
+
+

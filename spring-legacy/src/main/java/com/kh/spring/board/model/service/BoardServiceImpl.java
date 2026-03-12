@@ -10,6 +10,7 @@ import com.kh.spring.board.model.dao.BoardDao;
 import com.kh.spring.board.model.vo.Board;
 import com.kh.spring.board.model.vo.BoardExt;
 import com.kh.spring.board.model.vo.BoardImg;
+import com.kh.spring.board.model.vo.BoardType;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -113,6 +114,16 @@ public class BoardServiceImpl implements BoardService {
 		}
 
 		return result;
+	}
+
+	@Override
+	public List<String> selectFileList() {
+		return boardDao.selectFileList();
+	}
+
+	@Override
+	public List<BoardType> selectBoardType() {
+		return boardDao.selectBoardType();
 	}
 
 }

@@ -148,4 +148,12 @@
 		SET status = 'N'
 		WHERE reply_no = #{replyNo} AND reply_writer = #{replyWriter}
 	</update>
+	
+	<select id="selectFileList" resultType="String">
+		SELECT change_name FROM board_img
+	</select>
+	
+	<select id="selectBoardType" resultType="boardType">
+		SELECT * FROM board_type
+	</select>
 </mapper>

@@ -1,15 +1,17 @@
 package com.kh.spring.board.model.dao;
 
 import java.util.List;
-import java.util.Map;
+import java.util.Map;import javax.servlet.ServletContext;
 
 import org.apache.ibatis.session.RowBounds;
 import org.mybatis.spring.SqlSessionTemplate;
 import org.springframework.stereotype.Repository;
 
+import com.kh.spring.board.model.service.BoardService;
 import com.kh.spring.board.model.vo.Board;
 import com.kh.spring.board.model.vo.BoardExt;
 import com.kh.spring.board.model.vo.BoardImg;
+import com.kh.spring.board.model.vo.BoardType;
 import com.kh.spring.common.model.vo.PageInfo;
 
 import lombok.RequiredArgsConstructor;
@@ -106,6 +108,16 @@ public class BoardDaoImpl implements BoardDao {
 	@Override
 	public int deleteBoardImg(String deleteList) {
 		return session.delete("board.deleteBoardImg", deleteList);
+	}
+
+	@Override
+	public List<String> selectFileList() {
+		return session.selectList("board.selectFileList");
+	}
+
+	@Override
+	public List<BoardType> selectBoardType() {
+		return session.selectList("board.selectBoardType");
 	}
 
 }
